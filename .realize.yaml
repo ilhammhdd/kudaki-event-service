@@ -25,7 +25,6 @@ schema:
     - -- QUERY_DB_PASSWORD mysqlreplicarocks
     - -- QUERY_DB_NAME kudaki_event
     - -- KAFKA_VERSION 2.1.1
-    # doku env vars
     - -- MALLID 11614766
     - -- SHAREDKEY 2BLlFButtyMA
     - -- CHAINMERCHANT NA
