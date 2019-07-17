@@ -70,7 +70,7 @@ func (ae *AddKudakiEvent) initKudakiEvent(inEvent *events.AddKudakiEvent, outEve
 		Status:            kudaki_event.KudakiEventStatus_UNPUBLISHED,
 		Uuid:              uuid.New().String(),
 		Venue:             inEvent.Venue}
-}
+} 
 
 func (ae *AddKudakiEvent) retrieveProfile(usr *user.User) *user.Profile {
 	row, err := ae.DBO.QueryRow("SELECT id,uuid,full_name,photo,created_at FROM kudaki_user.profiles WHERE user_uuid = ?;", usr.Uuid)
