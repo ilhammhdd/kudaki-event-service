@@ -2,7 +2,6 @@ package usecases
 
 import (
 	"database/sql"
-	"log"
 	"net/http"
 	"time"
 
@@ -38,9 +37,7 @@ func (ae *AddKudakiEvent) initInOutEvent(in proto.Message) (inEvent *events.AddK
 	outEvent.AddKudakiEvent = inEvent
 	outEvent.EventStatus = new(events.Status)
 	outEvent.EventStatus.Timestamp = ptypes.TimestampNow()
-	log.Println(inEvent)
-	usr := GetUserFromKudakiToken(inEvent.KudakiToken)
-	outEvent.Organizer = ae.retrieveProfile(usr)
+	outEvent.Organizer = GetUserFromKudakiToken(inEvent.KudakiToken)
 	outEvent.Uid = inEvent.Uid
 
 	return
@@ -70,7 +67,7 @@ func (ae *AddKudakiEvent) initKudakiEvent(inEvent *events.AddKudakiEvent, outEve
 		Status:            kudaki_event.KudakiEventStatus_UNPUBLISHED,
 		Uuid:              uuid.New().String(),
 		Venue:             inEvent.Venue}
-} 
+}
 
 func (ae *AddKudakiEvent) retrieveProfile(usr *user.User) *user.Profile {
 	row, err := ae.DBO.QueryRow("SELECT id,uuid,full_name,photo,created_at FROM kudaki_user.profiles WHERE user_uuid = ?;", usr.Uuid)
