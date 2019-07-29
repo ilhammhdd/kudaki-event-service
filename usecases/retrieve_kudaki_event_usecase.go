@@ -82,6 +82,7 @@ func (rke *RetrieveKudakiEvent) retrieveFromDB(inEvent *events.RetrieveKudakiEve
 	kudakiEvent.AdDurationTo = adDurationToProto
 	kudakiEvent.Status = kudaki_event.KudakiEventStatus(kudaki_event.KudakiEventStatus_value[status])
 	kudakiEvent.Seen++
+	kudakiEvent.Uuid = inEvent.KudakiEventUuid
 
 	return &kudakiEvent
 }
