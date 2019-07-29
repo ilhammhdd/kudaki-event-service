@@ -42,7 +42,4 @@ ENV CHAINMERCHANT=$CHAINMERCHANT
 
 COPY --from=build-env /go/src/github.com/ilhammhdd/kudaki-event-service/kudaki_event_service_app .
 
-RUN mkdir /certs
-VOLUME /certs
-
 ENTRYPOINT ./kudaki_event_service_app
