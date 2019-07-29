@@ -38,6 +38,6 @@ schema:
     - .realize
     - vendor
     - .vendor-new
-    scritps:
+    scripts:
     - type: before
       command: taskkill /IM "kudaki-event-service.exe" /F
