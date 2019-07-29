@@ -27,6 +27,8 @@ func (rke *RetrieveKudakiEvent) Handle(in proto.Message) (out proto.Message) {
 	}
 
 	outEvent.KudakiEvent = kudakiEvent
+	outEvent.EventStatus.HttpCode = http.StatusOK
+
 	return outEvent
 }
 

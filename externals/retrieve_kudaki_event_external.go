@@ -1,6 +1,8 @@
 package externals
 
 import (
+	"net/http"
+
 	"github.com/golang/protobuf/proto"
 	"github.com/ilhammhdd/go-toolkit/errorkit"
 	"github.com/ilhammhdd/kudaki-event-service/adapters"
@@ -30,6 +32,10 @@ func (rke *RetrieveKudakiEvent) Work() interface{} {
 
 func (rke *RetrieveKudakiEvent) ExecutePostUsecase(inEvent proto.Message, outEvent proto.Message) {
 	out := outEvent.(*events.KudakiEventRetrieved)
+
+	if out.EventStatus.HttpCode != http.StatusOK {
+		return
+	}
 
 	dbo := mysql.NewDBOperation(mysql.CommandDB)
 	_, err := dbo.Command("UPDATE kudaki_event.kudaki_events SET seen = ? WHERE uuid = ?;",
