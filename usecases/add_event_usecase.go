@@ -61,6 +61,7 @@ func (ae *AddKudakiEvent) initKudakiEvent(inEvent *events.AddKudakiEvent, outEve
 		Description:       inEvent.Description,
 		DurationFrom:      durationFromProto,
 		DurationTo:        durationToProto,
+		FilePath:          inEvent.FilePath,
 		Name:              inEvent.Name,
 		OrganizerUserUuid: outEvent.Organizer.Uuid,
 		Seen:              0,

@@ -38,7 +38,7 @@ func (ae *AddKudakiEvent) ExecutePostUsecase(inEvent proto.Message, outEvent pro
 	}
 
 	dbo := mysql.NewDBOperation(mysql.CommandDB)
-	_, err := dbo.Command("INSERT INTO kudaki_event.kudaki_events(uuid,organizer_user_uuid,name,venue,description,duration_from,duration_to,ad_duration_from,ad_duration_to,seen,status,created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,UNIX_TIMESTAMP());",
+	_, err := dbo.Command("INSERT INTO kudaki_event.kudaki_events(uuid,organizer_user_uuid,name,venue,description,duration_from,duration_to,ad_duration_from,ad_duration_to,seen,status,file_path,created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,UNIX_TIMESTAMP());",
 		out.KudakiEvent.Uuid,
 		out.KudakiEvent.OrganizerUserUuid,
 		out.KudakiEvent.Name,
@@ -50,6 +50,7 @@ func (ae *AddKudakiEvent) ExecutePostUsecase(inEvent proto.Message, outEvent pro
 		out.KudakiEvent.AdDurationTo.Seconds,
 		out.KudakiEvent.Seen,
 		out.KudakiEvent.Status.String(),
+		out.KudakiEvent.FilePath,
 	)
 	errorkit.ErrorHandled(err)
 }
