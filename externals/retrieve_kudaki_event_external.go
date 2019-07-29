@@ -29,10 +29,10 @@ func (rke *RetrieveKudakiEvent) Work() interface{} {
 }
 
 func (rke *RetrieveKudakiEvent) ExecutePostUsecase(inEvent proto.Message, outEvent proto.Message) {
-	in := inEvent.(*events.KudakiEventRetrieved)
+	out := outEvent.(*events.KudakiEventRetrieved)
 
 	dbo := mysql.NewDBOperation(mysql.CommandDB)
 	_, err := dbo.Command("UPDATE kudaki_event.kudaki_events SET seen = ? WHERE uuid = ?;",
-		in.KudakiEvent.Seen, in.KudakiEvent.Uuid)
+		out.KudakiEvent.Seen, out.KudakiEvent.Uuid)
 	errorkit.ErrorHandled(err)
 }

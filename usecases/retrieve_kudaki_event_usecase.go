@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"database/sql"
+	"net/http"
 	"time"
 
 	"github.com/golang/protobuf/proto"
@@ -16,8 +17,17 @@ type RetrieveKudakiEvent struct {
 }
 
 func (rke *RetrieveKudakiEvent) Handle(in proto.Message) (out proto.Message) {
+	inEvent, outEvent := rke.initInOutEvent(in)
 
-	return nil
+	kudakiEvent := rke.retrieveFromDB(inEvent)
+	if kudakiEvent == nil {
+		outEvent.EventStatus.Errors = []string{"kudaki event with the given uuid doesn't exists"}
+		outEvent.EventStatus.HttpCode = http.StatusNotFound
+		return outEvent
+	}
+
+	outEvent.KudakiEvent = kudakiEvent
+	return outEvent
 }
 
 func (rke *RetrieveKudakiEvent) initInOutEvent(in proto.Message) (inEvent *events.RetrieveKudakiEvent, outEvent *events.KudakiEventRetrieved) {
