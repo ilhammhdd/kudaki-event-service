@@ -28,6 +28,7 @@ func main() {
 
 	wp.Worker <- new(externals.AddKudakiEvent)
 	wp.Worker <- new(externals.DeleteKudakiEvent)
+	wp.Worker <- new(externals.RetrieveKudakiEvent)
 
 	wp.PoolWG.Wait()
 }
