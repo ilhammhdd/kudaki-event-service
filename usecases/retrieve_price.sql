@@ -1,11 +1,15 @@
 SELECT
-  p.price
+  ke.seen,
+  ke.name,
+  ke.venue,
+  ke.description,
+  ke.duration_from,
+  ke.duration_to,
+  ke.ad_duration_from,
+  ke.ad_duration_to,
+  ke.status,
+  ke.file_path
 FROM
-  kudaki_event.prices p
-  JOIN kudaki_user.users u ON p.creator_user_uuid = u.uuid
+  kudaki_event.kudaki_events ke
 WHERE
-  p.duration_unit = "DAY"
-  AND (
-    u.role = "ADMIN"
-    OR u.role = "KUDAKI_TEAM"
-  );
+  ke.uuid = "a4ebad1f-e84f-4ece-aeb9-7826491e7cb8";

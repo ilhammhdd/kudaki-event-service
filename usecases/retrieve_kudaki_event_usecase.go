@@ -42,7 +42,7 @@ func (rke *RetrieveKudakiEvent) initInOutEvent(in proto.Message) (inEvent *event
 }
 
 func (rke *RetrieveKudakiEvent) retrieveFromDB(inEvent *events.RetrieveKudakiEvent) *kudaki_event.KudakiEvent {
-	row, err := rke.DBO.QueryRow("SELECT ke.seen, ke.name, ke.venue, ke.description, ke.duration_from, ke.duration_to, ke.ad_duration_from, ke.ad_duration_to, ke.status, ke.poster FROM kudaki_event.kudaki_events ke WHERE ke.uuid = ?",
+	row, err := rke.DBO.QueryRow("SELECT ke.seen, ke.name, ke.venue, ke.description, ke.duration_from, ke.duration_to, ke.ad_duration_from, ke.ad_duration_to, ke.status, ke.file_path FROM kudaki_event.kudaki_events ke WHERE ke.uuid = ?;",
 		inEvent.KudakiEventUuid)
 	errorkit.ErrorHandled(err)
 
