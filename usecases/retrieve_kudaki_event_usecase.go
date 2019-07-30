@@ -19,7 +19,7 @@ type RetrieveKudakiEvent struct {
 func (rke *RetrieveKudakiEvent) Handle(in proto.Message) (out proto.Message) {
 	inEvent, outEvent := rke.initInOutEvent(in)
 
-	kudakiEvent := rke.retrieveFromDB(inEvent)
+	kudakiEvent, paymentStat := rke.retrieveFromDB(inEvent)
 	if kudakiEvent == nil {
 		outEvent.EventStatus.Errors = []string{"kudaki event with the given uuid doesn't exists"}
 		outEvent.EventStatus.HttpCode = http.StatusNotFound
@@ -27,6 +27,7 @@ func (rke *RetrieveKudakiEvent) Handle(in proto.Message) (out proto.Message) {
 	}
 
 	outEvent.KudakiEvent = kudakiEvent
+	outEvent.PaymentStatus = paymentStat
 	outEvent.EventStatus.HttpCode = http.StatusOK
 
 	return outEvent
@@ -43,8 +44,8 @@ func (rke *RetrieveKudakiEvent) initInOutEvent(in proto.Message) (inEvent *event
 	return
 }
 
-func (rke *RetrieveKudakiEvent) retrieveFromDB(inEvent *events.RetrieveKudakiEvent) *kudaki_event.KudakiEvent {
-	row, err := rke.DBO.QueryRow("SELECT ke.seen, ke.name, ke.venue, ke.description, ke.duration_from, ke.duration_to, ke.ad_duration_from, ke.ad_duration_to, ke.status, ke.file_path FROM kudaki_event.kudaki_events ke WHERE ke.uuid = ?;",
+func (rke *RetrieveKudakiEvent) retrieveFromDB(inEvent *events.RetrieveKudakiEvent) (*kudaki_event.KudakiEvent, string) {
+	row, err := rke.DBO.QueryRow("SELECT ke.uuid, ke.seen, ke.name, ke.venue, ke.description, ke.duration_from, ke.duration_to, ke.ad_duration_from, ke.ad_duration_to, ke.status, ke.file_path, di.status FROM kudaki_event.kudaki_events ke JOIN kudaki_event.doku_invoices di ON ke.uuid = di.kudaki_event_uuid WHERE ke.uuid = ?;",
 		inEvent.KudakiEventUuid)
 	errorkit.ErrorHandled(err)
 
@@ -54,8 +55,10 @@ func (rke *RetrieveKudakiEvent) retrieveFromDB(inEvent *events.RetrieveKudakiEve
 	var adDurationFrom int64
 	var adDurationTo int64
 	var status string
+	var paymentStatus string
 
 	if err = row.Scan(
+		&kudakiEvent.Uuid,
 		&kudakiEvent.Seen,
 		&kudakiEvent.Name,
 		&kudakiEvent.Venue,
@@ -65,8 +68,9 @@ func (rke *RetrieveKudakiEvent) retrieveFromDB(inEvent *events.RetrieveKudakiEve
 		&adDurationFrom,
 		&adDurationTo,
 		&status,
-		&kudakiEvent.FilePath); err == sql.ErrNoRows {
-		return nil
+		&kudakiEvent.FilePath,
+		&paymentStatus); err == sql.ErrNoRows {
+		return nil, ""
 	}
 
 	durationFromProto, err := ptypes.TimestampProto(time.Unix(durationFrom, 0))
@@ -86,5 +90,5 @@ func (rke *RetrieveKudakiEvent) retrieveFromDB(inEvent *events.RetrieveKudakiEve
 	kudakiEvent.Seen++
 	kudakiEvent.Uuid = inEvent.KudakiEventUuid
 
-	return &kudakiEvent
+	return &kudakiEvent, paymentStatus
 }
